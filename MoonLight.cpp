@@ -1,105 +1,100 @@
-#include "Utility/PPM.hpp"
+#include "ToneMapping/ACESMapping.hpp"
+#include "ToneMapping/GammaCorrection.hpp"
+#include "ToneMapping/Standardization.hpp"
+#include "Object/Sphere.hpp"
+#include "Object/Triangle.hpp"
+#include "ImageFormat/PPM.hpp"
+#include "Sampler/Jittered.hpp"
+#include "Utility/Rand.hpp"
+#include "Utility/ObjectFile.hpp"
+#include "Camera/PerspectiveCamera.hpp"
+#include "Camera/FisheyeCamera.hpp"
+#include "Camera/OrthographicCamera.hpp"
+#include "Tracer/Tracer.hpp"
+#include "Material/Matte.hpp"
+#include "Material/Mirror.hpp"
+#include "Material/Glass.hpp"
+#include "BRDF/Glossy.hpp"
+#include "BRDF/Diffuse.hpp"
 
 #include <cmath>
+#include <iostream>
+#include <vector>
+#include <memory>
 
 using namespace MoonLight;
 
-const int width = 1920, height = 1080, sample = 4;
+const int width = 500, height = 500, num_set = 2000, samples = 5;
 
-RGB_T<float> screen[width * height];
+using type = double;
 
-Sphere spheres[] = {//Scene: radius, position, emission, color, material
-  Sphere(1e5, Vec( 1e5+1,40.8,81.6), Vec(),Vec(.75,.25,.25),DIFF),//Left
-  Sphere(1e5, Vec(-1e5+99,40.8,81.6),Vec(),Vec(.25,.25,.75),DIFF),//Rght
-  Sphere(1e5, Vec(50,40.8, 1e5),     Vec(),Vec(.75,.75,.75),DIFF),//Back
-  Sphere(1e5, Vec(50,40.8,-1e5+170), Vec(),Vec(),           DIFF),//Frnt
-  Sphere(1e5, Vec(50, 1e5, 81.6),    Vec(),Vec(.75,.75,.75),DIFF),//Botm
-  Sphere(1e5, Vec(50,-1e5+81.6,81.6),Vec(),Vec(.75,.75,.75),DIFF),//Top
-  Sphere(16.5,Vec(27,16.5,47),       Vec(),Vec(1,1,1)*.999, SPEC),//Mirr
-  Sphere(16.5,Vec(73,16.5,78),       Vec(),Vec(1,1,1)*.999, REFR),//Glas
-  Sphere(600, Vec(50,681.6-.27,81.6),Vec(12,12,12),  Vec(), DIFF) //Lite
-};
+RGB_T<type> screen[width * height], back[width * height];
 
-inline bool intersect(const Ray &r, double &t, int &id){
-  double n=sizeof(spheres)/sizeof(Sphere), d, inf=t=1e20;
-  for(int i=int(n);i--;) if((d=spheres[i].intersect(r))&&d<t){t=d;id=i;}
-  return t<inf;
-}
+std::vector<std::shared_ptr<ToneMapping<type>>> tonemapping;
+std::shared_ptr<ImageFormat<type>> save = std::make_shared<PPM<type>>();
+std::shared_ptr<Sampler<type, samples>> sampler = std::make_shared<Jittered<type, samples>>();
+std::shared_ptr<Camera<type>> camera = std::make_shared<PerspectiveCamera<type>>(Vector3D_T<type>(0, 0, -1), Vector3D_T<type>(0, 0, 1), Vector3D_T<type>(0, 1, 0), Vector3D_T<type>(-1, 0, 0), (type)width / height, 0.5 * M_PI);
 
-RGB_T<float> radiance(const Ray &r, int depth, unsigned short *Xi){
-  double t;                               // distance to intersection
-  int id=0;                               // id of intersected object
-  if (!intersect(r, t, id)) return Vec(); // if miss, return black
-  const Sphere &obj = spheres[id];        // the hit object
-  Vector3D_T<float> x=r.o+r.d*t, n=(x-obj.p).norm(), nl=n.dot(r.d)<0?n:n*-1, f=obj.c;
-  double p = f.x>f.y && f.x>f.z ? f.x : f.y>f.z ? f.y : f.z; // max refl
-  if (++depth>5) if (erand48(Xi)<p) f=f*(1/p); else return obj.e; //R.R.
-  if (obj.refl == DIFF){                  // Ideal DIFFUSE reflection
-    double r1=2*M_PI*erand48(Xi), r2=erand48(Xi), r2s=sqrt(r2);
-    Vec w=nl, u=((fabs(w.x)>.1?Vec(0,1):Vec(1))%w).norm(), v=w%u;
-    Vec d = (u*cos(r1)*r2s + v*sin(r1)*r2s + w*sqrt(1-r2)).norm();
-    return obj.e + f.mult(radiance(Ray(x,d),depth,Xi));
-  } else if (obj.refl == SPEC)            // Ideal SPECULAR reflection
-    return obj.e + f.mult(radiance(Ray(x,r.d-n*2*n.dot(r.d)),depth,Xi));
-  Ray reflRay(x, r.d-n*2*n.dot(r.d));     // Ideal dielectric REFRACTION
-  bool into = n.dot(nl)>0;                // Ray from outside going in?
-  double nc=1, nt=1.5, nnt=into?nc/nt:nt/nc, ddn=r.d.dot(nl), cos2t;
-  if ((cos2t=1-nnt*nnt*(1-ddn*ddn))<0)    // Total internal reflection
-    return obj.e + f.mult(radiance(reflRay,depth,Xi));
-  Vec tdir = (r.d*nnt - n*((into?1:-1)*(ddn*nnt+sqrt(cos2t)))).norm();
-  double a=nt-nc, b=nt+nc, R0=a*a/(b*b), c = 1-(into?-ddn:tdir.dot(n));
-  double Re=R0+(1-R0)*c*c*c*c*c,Tr=1-Re,P=.25+.5*Re,RP=Re/P,TP=Tr/(1-P);
-  return obj.e + f.mult(depth>2 ? (erand48(Xi)<P ?   // Russian roulette
-    radiance(reflRay,depth,Xi)*RP:radiance(Ray(x,tdir),depth,Xi)*TP) :
-    radiance(reflRay,depth,Xi)*Re+radiance(Ray(x,tdir),depth,Xi)*Tr);
-}
+std::shared_ptr<std::array<Vector2D_T<type>, samples * samples>> points = std::make_shared<std::array<Vector2D_T<type>, samples * samples>>();
 
-float ACES(float x)
+int main(int argc, char *argv[])
 {
-    return (x*(2.51f*x+0.03f))/(x*(2.43f*x+0.59f)+0.14f);
-}
+    Rand<type>::init_rand();
 
-RGB_T<float> MapTone(const RGB_T<float> &color)
-{
-    return RGB_T<float>(ACES(color.red), ACES(color.green), ACES(color.blue));
-}
+    tonemapping.push_back(std::make_shared<ACESMapping<type>>());
+    tonemapping.push_back(std::make_shared<GammaCorrection<type>>(2.2));
+    tonemapping.push_back(std::make_shared<Standardization<type>>(0, 1));
 
-int main()
-{
+    std::shared_ptr<BRDF<type>> glossy = std::make_shared<Glossy<type>>(1000);
+    std::shared_ptr<BRDF<type>> diffuse = std::make_shared<Diffuse<type>>(1);
+    std::shared_ptr<BRDF<type>> reflection = std::make_shared<Glossy<type>>(1000);
 
-  Vec cx=Vec(w*.5135/h), cy=(cx%cam.d).norm()*.5135, r;
-#pragma omp parallel for schedule(dynamic, 1) private(r)       // OpenMP
-  for (int y=0; y<h; y++){                       // Loop over image rows
-    fprintf(stderr,"\rRendering (%d spp) %5.2f%%",samps*4,100.*y/(h-1));
-    for (unsigned short x=0, Xi[3]={0,0,y*y*y}; x<w; x++)   // Loop cols
-      for (int sy=0, i=(h-y-1)*w+x; sy<2; sy++)     // 2x2 subpixel rows
-        for (int sx=0; sx<2; sx++, r=Vec()){        // 2x2 subpixel cols
-          for (int s=0; s<samps; s++){
-            double r1=2*erand48(Xi), dx=r1<1 ? sqrt(r1)-1: 1-sqrt(2-r1);
-            double r2=2*erand48(Xi), dy=r2<1 ? sqrt(r2)-1: 1-sqrt(2-r2);
-            Vec d = cx*( ( (sx+.5 + dx)/2 + x)/w - .5) +
-                    cy*( ( (sy+.5 + dy)/2 + y)/h - .5) + cam.d;
-            r = r + radiance(Ray(cam.o+d*140,d.norm()),0,Xi)*(1./samps);
-          } // Camera rays are pushed ^^^^^ forward to start in interior
-          c[i] = c[i] + Vec(clamp(r.x),clamp(r.y),clamp(r.z))*.25;
-        }
-  }
+    objects.push_back(std::make_shared<Sphere<type>>(std::make_shared<Matte<type>>(RGB_T<type>(1, 1, 1), RGB_T<type>(11, 11, 11), diffuse),0.2, Vector3D_T<type>(0, 1, 0.5)));
+    objects.push_back(std::make_shared<Sphere<type>>(std::make_shared<Glass<type>>(RGB_T<type>(1, 1, 1), RGB_T<type>(0, 0, 0), glossy, 1.5),0.3, Vector3D_T<type>(0.5, -0.7, 0.4)));
+    objects.push_back(std::make_shared<Sphere<type>>(std::make_shared<Mirror<type>>(RGB_T<type>(1, 1, 1), RGB_T<type>(0, 0, 0), reflection),0.3, Vector3D_T<type>(-0.5, -0.7, 0.6)));
 
+    objects.push_back(std::make_shared<Sphere<type>>(std::make_shared<Matte<type>>(RGB_T<type>(0.75, 0.75, 0.75), RGB_T<type>(0, 0, 0), diffuse), 1000, Vector3D_T<type>(0, -1001, 0)));
+    objects.push_back(std::make_shared<Sphere<type>>(std::make_shared<Matte<type>>(RGB_T<type>(0.75, 0.75, 0.75), RGB_T<type>(0, 0, 0), diffuse), 1000, Vector3D_T<type>(0, +1001, 0)));
+    objects.push_back(std::make_shared<Sphere<type>>(std::make_shared<Matte<type>>(RGB_T<type>(0.25, 0.25, 0.75), RGB_T<type>(0, 0, 0), diffuse), 1000, Vector3D_T<type>(-1001, 0, 0)));
+    objects.push_back(std::make_shared<Sphere<type>>(std::make_shared<Matte<type>>(RGB_T<type>(0.75, 0.25, 0.25), RGB_T<type>(0, 0, 0), diffuse), 1000, Vector3D_T<type>(+1001, 0, 0)));
+    objects.push_back(std::make_shared<Sphere<type>>(std::make_shared<Matte<type>>(RGB_T<type>(0.75, 0.75, 0.75), RGB_T<type>(0, 0, 0), diffuse), 1000, Vector3D_T<type>(0, 0, +1001.5)));
+    objects.push_back(std::make_shared<Sphere<type>>(std::make_shared<Matte<type>>(RGB_T<type>(0.75, 0.75, 0.75), RGB_T<type>(0, 0, 0), diffuse), 1000, Vector3D_T<type>(0, 0, -1003)));
 
-
-    Ray cam(Vector3D_T<float>(50,52,295.6), Vector3D_T<float> Normalise(Vec(0,-0.042612,-1)));
-    Vector3D_T<float> cx = Vector3D_T<float> (w * 0.5135 / h), cy = ();
-    for(int y = 0; y < height; ++ y)
+    for(int set = 0; set < num_set; ++ set)
     {
-        for(int x = 0; x < width; ++ x)
+        printf("set %d\n", set);
+        for(int x = 0; x < height; ++ x)
         {
-            screen[y * width + x].red = (float)x / (float)width;
-            screen[y * width + x].green = (float)y / (float)height;
+            printf("%d\n", x);
+            for(int y = 0; y < width; ++ y)
+            {
+                sampler->Sampling(points);
+
+                RGB_T<type> color;
+                for(int k = 0; k < samples * samples; ++ k)
+                {
+                    color += Tracer<type>::Trace(camera->GetRay(((x + (*points)[k].x) / height), (y + (*points)[k].y) / width));
+                }
+                
+                screen[x * width + y] = screen[x * width + y] * set / (set + 1) + color / (set + 1) / samples / samples;
+            }
         }
+
+        for(int i = 0; i < height; ++ i)
+        {
+            for(int j = 0; j < width; ++ j)
+            {
+                back[i * width + j] = screen[i * width + j];
+            }
+        }
+
+        for(auto mapping : tonemapping)
+        {
+            mapping->Mapping(width, height, back);
+        }
+
+        save->Save("test.ppm", width, height, back);
     }
-    for(int i = 0; i < width * height; ++ i)
-    {
-        screen[i] = MapTone(screen[i]);
-    }
-    PPM::Save("image.ppm", width, height, screen);
+
+    return 0;
 }

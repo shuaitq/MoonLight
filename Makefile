@@ -1,13 +1,13 @@
 PROJECT = MoonLight
 CPP = g++
-CPPFLAGS = -std=c++11 -Wall
+CPPFLAGS = -std=c++11 -Wall -lpthread
 ifdef DEBUG
 CPPFLAGS += -g
 else
 CPPFLAGS += -O2
 endif
-SRCS = MoonLight.cpp \
-       Utility/PPM.cpp
+SRCS = MoonLight.cpp Tracer/Tracer.cpp
+
 OBJS = $(SRCS:.cpp=.o)
 
 $(PROJECT): $(OBJS)

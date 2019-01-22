@@ -88,7 +88,7 @@ namespace MoonLight
     class RGBA_T
     {
     public:
-        RGBA_T(const T t = 0, const T a = 1):red(t), green(t), blue(t), alpha(alpha){}
+        RGBA_T(const T t = 0, const T a = 1):red(t), green(t), blue(t), alpha(a){}
         RGBA_T(const T r, const T g, const T b, const T a = 1):red(r), green(g), blue(b), alpha(a){}
         RGBA_T(const RGBA_T<T> &rgba):red(rgba.red), green(rgba.green), blue(rgba.blue), alpha(rgba.alpha){}
         RGBA_T<T>& operator = (const RGBA_T<T> &rgba)

@@ -1,15 +1,22 @@
 #ifndef MOONLIGHT_RAY_HPP_
 #define MOONLIGHT_RAY_HPP_
 
-#include "../Math/Math.hpp"
+#include "../Math/Vector.hpp"
 
-struct Ray
+namespace MoonLight
 {
-    Vector3D_T<float> direction, origin;
-    Vector3D_T<float> GetPoint(const float t)
+    template <typename T>
+    class Ray
     {
-        return origin + direction * t;
-    }
-};
+    public:
+        Vector3D_T<T> origin, direction;
+        Ray():origin(), direction(){}
+        Ray(const Vector3D_T<T> &o, const Vector3D_T<T> &d):origin(o), direction(d){}
+        Vector3D_T<T> GetPoint(const T t) const
+        {
+            return origin + direction * t;
+        }
+    };
+}
 
 #endif // MOONLIGHT_RAY_HPP_
