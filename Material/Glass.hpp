@@ -13,7 +13,6 @@ namespace MoonLight
 
         Ray<T> GetRay(const Vector3D_T<T> &position, const Vector3D_T<T> &normal, const Vector3D_T<T> &incident)
         {
-
             Vector3D_T<T> n;
             T nnt, ddn;
             bool into;
