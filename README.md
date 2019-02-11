@@ -1,2 +1,7 @@
-# MoonLight
-A ray tracing render.
+# MoonLight - 月光
+一个使用C++语言编写的CPU计算光线追踪渲染器。
+
+# 特性
+
+# 渲染结果
+
