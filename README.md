@@ -25,10 +25,10 @@
 
 ## 钻石模型
 
-<a target="_blank" rel="noopener noreferrer" href="https://github.com/shuaitq/MoonLight/blob/master/Image/diamond1.png"><img src="https://github.com/shuaitq/MoonLight/blob/master/Image/diamond1.png" width="400pt" height="400pt"></a>
 <a target="_blank" rel="noopener noreferrer" href="https://github.com/shuaitq/MoonLight/blob/master/Image/diamond2.png"><img src="https://github.com/shuaitq/MoonLight/blob/master/Image/diamond2.png" width="400pt" height="400pt"></a>
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/shuaitq/MoonLight/blob/master/Image/diamond1.png"><img src="https://github.com/shuaitq/MoonLight/blob/master/Image/diamond1.png" width="400pt" height="400pt"></a>
 
-## 写出的最美的BUG图
+## 最美的BUG图
 
 <a target="_blank" rel="noopener noreferrer" href="https://github.com/shuaitq/MoonLight/blob/master/Image/beautiful_bug.png"><img src="https://github.com/shuaitq/MoonLight/blob/master/Image/beautiful_bug.png" width="400pt" height="400pt"></a>
 
