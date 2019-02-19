@@ -4,14 +4,14 @@
 #include "../Core/Color.hpp"
 
 #include <string>
+#include <vector>
 
 namespace MoonLight
 {
-    template <typename T>
     class ImageFormat
     {
     public:
-        virtual void Save(const std::string &path, const int width, const int height, const RGB_T<T> *pixels) = 0;
+        virtual void Save(const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels) = 0;
     };
 }
 
