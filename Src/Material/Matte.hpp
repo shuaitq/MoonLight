@@ -5,16 +5,12 @@
 
 namespace MoonLight
 {
-    template <typename T>
-    class Matte : public Material<T>
+    class Matte : public Material
     {
     public:
-        Matte(const RGB_T<T> &c, const RGB_T<T> &e, const std::shared_ptr<BRDF<T>> &b):Material<T>(c, e, b){}
+        Matte(const RGB_T<double> &c, const RGB_T<double> &e, const std::shared_ptr<BRDF> &b);
 
-        Ray<T> GetRay(const Vector3D_T<T> &position, const Vector3D_T<T> &normal, const Vector3D_T<T> &incident)
-        {
-            return this->brdf->GetRay(position, normal, incident - 2 * Dot(incident, normal) * normal);
-        }
+        Ray<double> GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &incident);
     };
 }
 

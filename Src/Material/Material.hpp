@@ -8,20 +8,19 @@
 
 namespace MoonLight
 {
-    template <typename T>
     class Material
     {
     public:
-        Material(const RGB_T<T> &c, const RGB_T<T> &e, const std::shared_ptr<BRDF<T>> &b):color(c), emission(e), brdf(b){}
-        virtual RGB_T<T> Shade(const RGB_T<T> &trace_color)
+        Material(const RGB_T<double> &c, const RGB_T<double> &e, const std::shared_ptr<BRDF> &b):color(c), emission(e), brdf(b){}
+        virtual RGB_T<double> Shade(const RGB_T<double> &trace_color)
         {
             return emission + color * trace_color;
         }
-        virtual Ray<T> GetRay(const Vector3D_T<T> &position, const Vector3D_T<T> &normal, const Vector3D_T<T> &incident) = 0;
+        virtual Ray<double> GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &incident) = 0;
     protected:
-        RGB_T<T> color;
-        RGB_T<T> emission;
-        std::shared_ptr<BRDF<T>> brdf;
+        RGB_T<double> color;
+        RGB_T<double> emission;
+        std::shared_ptr<BRDF> brdf;
     };
 }
 
