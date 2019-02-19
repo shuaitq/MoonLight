@@ -3,27 +3,16 @@
 
 #include "ToneMapping.hpp"
 
-#include <cmath>
-
 namespace MoonLight
 {
-    template <typename T>
-    class Standardization : public ToneMapping<T>
+    class Standardization : public ToneMapping
     {
     public:
-        Standardization(T l, T h):low(l), high(h){}
-        void Mapping(const int width, const int height, RGB_T<T> *pixels)
-        {
-            for(int i = 0; i < width * height; ++ i)
-            {
-                pixels[i].red = std::min(std::max(pixels[i].red, low), high);
-                pixels[i].green = std::min(std::max(pixels[i].green, low), high);
-                pixels[i].blue = std::min(std::max(pixels[i].blue, low), high);
-            }
-        }
-    
+        Standardization(double l, double h);
+        void Mapping(const int width, const int height, std::vector<RGB_T<double>> &pixels);
+
     private:
-        T low, high;
+        double low, high;
     };
 }
 

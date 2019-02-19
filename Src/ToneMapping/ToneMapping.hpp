@@ -3,13 +3,14 @@
 
 #include "../Core/Color.hpp"
 
+#include <vector>
+
 namespace MoonLight
 {
-    template <typename T>
     class ToneMapping
     {
     public:
-        virtual void Mapping(const int width, const int height, RGB_T<T> *pixels) = 0;
+        virtual void Mapping(const int width, const int height, std::vector<RGB_T<double>> &pixels) = 0;
     };
 }
 
