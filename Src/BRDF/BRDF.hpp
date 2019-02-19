@@ -1,13 +1,15 @@
 #ifndef MOONLIGHT_BRDF_HPP_
 #define MOONLIGHT_BRDF_HPP_
 
+#include "../Core/Ray.hpp"
+#include "../Math/Vector.hpp"
+
 namespace MoonLight
 {
-    template <typename T>
     class BRDF
     {
     public:
-        virtual Ray<T> GetRay(const Vector3D_T<T> &position, const Vector3D_T<T> &normal, const Vector3D_T<T> &direction) = 0;
+        virtual Ray<double> GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &direction) = 0;
     };
 }
 
