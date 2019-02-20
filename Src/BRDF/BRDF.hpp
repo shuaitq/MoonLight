@@ -9,7 +9,7 @@ namespace MoonLight
     class BRDF
     {
     public:
-        virtual Ray<double> GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &direction) = 0;
+        virtual Ray<double> GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &direction) const = 0;
     };
 }
 

@@ -6,7 +6,7 @@ namespace MoonLight
 {
     Glossy::Glossy(double d):degree(d){}
 
-    Ray<double> Glossy::GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &direction)
+    Ray<double> Glossy::GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &direction) const
     {
         double phi = 2 * M_PI * Rand();
         double cos_theta = pow(Rand(), 1 / (1 + degree));
