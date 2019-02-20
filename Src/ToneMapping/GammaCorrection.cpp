@@ -1,20 +1,18 @@
 #include "GammaCorrection.hpp"
 
 #include <cmath>
+#include <algorithm>
 
 namespace MoonLight
 {
-    GammaCorrection::GammaCorrection(double g):gamma(g){}
-
-    void GammaCorrection::Mapping(const int width, const int height, std::vector<RGB_T<double>> &pixels)
+    std::function<void(RGB_T<double> &)> GammaCorrection(double gamma)
     {
-        auto f = [&](double x){ return pow(x, 1 / gamma); };
-
-        for(int i = 0; i < width * height; ++ i)
+        return [=](RGB_T<double> &rgb)
         {
-            pixels[i].red = f(pixels[i].red);
-            pixels[i].green = f(pixels[i].green);
-            pixels[i].blue = f(pixels[i].blue);
-        }
+            std::for_each(std::begin(rgb.color), std::end(rgb.color), [=](double &x)
+            {
+                x = pow(x, 1 / gamma);
+            });
+        };
     }
 }

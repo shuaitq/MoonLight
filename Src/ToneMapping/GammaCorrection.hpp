@@ -1,19 +1,13 @@
 #ifndef MOONLIGHT_GAMMA_CORRECTION_HPP_
 #define MOONLIGHT_GAMMA_CORRECTION_HPP_
 
-#include "ToneMapping.hpp"
+#include "../Core/Color.hpp"
+
+#include <functional>
 
 namespace MoonLight
 {
-    class GammaCorrection : public ToneMapping
-    {
-    public:
-        GammaCorrection(double g);
-        void Mapping(const int width, const int height, std::vector<RGB_T<double>> &pixels);
-
-    private:
-        double gamma;
-    };
+    std::function<void(RGB_T<double> &)> GammaCorrection(double gamma);
 }
 
 #endif // MOONLIGHT_GAMMA_CORRECTION_HPP_

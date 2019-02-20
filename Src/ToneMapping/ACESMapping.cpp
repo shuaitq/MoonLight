@@ -1,16 +1,17 @@
 #include "ACESMapping.hpp"
 
+#include <algorithm>
+
 namespace MoonLight
 {
-    void ACESMapping::Mapping(const int width, const int height, std::vector<RGB_T<double>> &pixels)
+    std::function<void(RGB_T<double> &)> ACESMapping()
     {
-        auto f = [](double x){ return (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14); };
-
-        for(int i = 0; i < width * height; ++ i)
+        return [](RGB_T<double> &rgb)
         {
-            pixels[i].red = f(pixels[i].red);
-            pixels[i].green = f(pixels[i].green);
-            pixels[i].blue = f(pixels[i].blue);
-        }
+            std::for_each(std::begin(rgb.color), std::end(rgb.color), [](double &x)
+            {
+                x = (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14);
+            });
+        };
     }
 }

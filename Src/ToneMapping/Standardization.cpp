@@ -1,20 +1,17 @@
 #include "Standardization.hpp"
 
-#include <cmath>
+#include <algorithm>
 
 namespace MoonLight
 {
-    Standardization::Standardization(double l, double h):low(l), high(h){}
-
-    void Standardization::Mapping(const int width, const int height, std::vector<RGB_T<double>> &pixels)
+    std::function<void(RGB_T<double> &)> Standardization(double low, double high)
     {
-        auto f = [&](double x){ return std::min(std::max(x, low), high); };
-
-        for(int i = 0; i < width * height; ++ i)
+        return [=](RGB_T<double> &rgb)
         {
-            pixels[i].red = f(pixels[i].red);
-            pixels[i].green = f(pixels[i].green);
-            pixels[i].blue = f(pixels[i].blue);
-        }
+            std::for_each(std::begin(rgb.color), std::end(rgb.color), [=](double &x)
+            {
+                x = std::min(std::max(x, low), high);
+            });
+        };
     }
 }
