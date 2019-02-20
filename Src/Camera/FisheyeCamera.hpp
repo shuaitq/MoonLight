@@ -9,7 +9,7 @@ namespace MoonLight
     {
     public:
         FisheyeCamera(const Vector3D_T<double> &p, const Vector3D_T<double> &f, const Vector3D_T<double> &u, const Vector3D_T<double> &r, const double a, const double fo);
-        Ray<double> GetRay(double x, double y);
+        Ray<double> GetRay(const double x, const double y) const;
 
     private:
         double aspect;

@@ -10,7 +10,8 @@ namespace MoonLight
     {
     public:
         Camera(const Vector3D_T<double> &p, const Vector3D_T<double> &f, const Vector3D_T<double> &u, const Vector3D_T<double> &r);
-        virtual Ray<double> GetRay(double x, double y) = 0;
+        // x [-1, 1] y [-1, 1]
+        virtual Ray<double> GetRay(const double x, const double y) const = 0;
 
     protected:
         Vector3D_T<double> position;
