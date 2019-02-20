@@ -12,7 +12,6 @@ namespace MoonLight
         Ray<double> GetRay(const double x, const double y) const;
 
     private:
-        double aspect;
         double fov;
     };
 }
