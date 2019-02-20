@@ -11,7 +11,7 @@ namespace MoonLight
     class PPM : public ImageFormat
     {
     public:
-        void Save(const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels);
+        void Save(const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels) const;
     };
 }
 

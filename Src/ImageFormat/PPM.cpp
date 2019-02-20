@@ -2,7 +2,7 @@
 
 namespace MoonLight
 {
-    void PPM::Save(const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels)
+    void PPM::Save(const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels) const
     {
         std::ofstream out(path);
         if(!out.is_open())

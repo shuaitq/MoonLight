@@ -11,7 +11,7 @@ namespace MoonLight
     class ImageFormat
     {
     public:
-        virtual void Save(const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels) = 0;
+        virtual void Save(const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels) const = 0;
     };
 }
 
