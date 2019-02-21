@@ -5,7 +5,7 @@
 
 namespace MoonLight
 {
-    std::function<void(RGB_T<double> &)> GammaCorrection(double gamma)
+    ToneMapping GammaCorrection(double gamma)
     {
         return [=](RGB_T<double> &rgb)
         {

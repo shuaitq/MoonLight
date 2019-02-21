@@ -4,7 +4,7 @@
 
 namespace MoonLight
 {
-    std::function<void(RGB_T<double> &)> ACESMapping()
+    ToneMapping ACESMapping()
     {
         return [](RGB_T<double> &rgb)
         {

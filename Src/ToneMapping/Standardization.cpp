@@ -4,7 +4,7 @@
 
 namespace MoonLight
 {
-    std::function<void(RGB_T<double> &)> Standardization(double low, double high)
+    ToneMapping Standardization(double low, double high)
     {
         return [=](RGB_T<double> &rgb)
         {
