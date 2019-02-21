@@ -4,7 +4,7 @@
 
 namespace MoonLight
 {
-    BRDF Glossy(double degree)
+    BRDF Diffuse(double degree)
     {
         return [=](const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &direction)
         {
