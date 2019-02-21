@@ -1,18 +1,15 @@
 #ifndef MOONLIGHT_PPM_HPP_
 #define MOONLIGHT_PPM_HPP_
 
-#include "ImageFormat.hpp"
+#include "../Core/Color.hpp"
 
-#include <fstream>
-#include <stdexcept>
+#include <string>
+#include <functional>
+#include <vector>
 
 namespace MoonLight
 {
-    class PPM : public ImageFormat
-    {
-    public:
-        void Save(const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels) const;
-    };
+    std::function<void(const std::string &, const size_t width, const size_t height, const std::vector<RGB_T<double>> &)> PPM();
 }
 
-#endif //MOONLIGHT_PPM_HPP_
+#endif // MOONLIGHT_PPM_HPP_
