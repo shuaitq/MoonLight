@@ -1,19 +1,13 @@
 #ifndef MOONLIGHT_ORTHOGRAPHIC_CAMERA_HPP_
 #define MOONLIGHT_ORTHOGRAPHIC_CAMERA_HPP_
 
-#include "Camera.hpp"
+#include "../Core/Ray.hpp"
+
+#include <functional>
 
 namespace MoonLight
 {
-    class OrthographicCamera : public Camera
-    {
-    public:
-        OrthographicCamera(const Vector3D_T<double> &p, const Vector3D_T<double> &f, const Vector3D_T<double> &u, const Vector3D_T<double> &r, const double a, const double h);
-        Ray<double> GetRay(const double x, const double y) const;
-
-    private:
-        double height;
-    };
+    std::function<Ray<double>(const double, const double)> OrthographicCamera(const Vector3D_T<double> &position, const Vector3D_T<double> &front, const Vector3D_T<double> &up, const Vector3D_T<double> &right, const double aspect, const double height);
 }
 
 #endif // MOONLIGHT_ORTHOGRAPHIC_CAMERA_HPP_

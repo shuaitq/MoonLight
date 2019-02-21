@@ -1,19 +1,13 @@
 #ifndef MOONLIGHT_PERSPECTIVE_CAMERA_HPP_
 #define MOONLIGHT_PERSPECTIVE_CAMERA_HPP_
 
-#include "Camera.hpp"
+#include "../Core/Ray.hpp"
+
+#include <functional>
 
 namespace MoonLight
 {
-    class PerspectiveCamera : public Camera
-    {
-    public:
-        PerspectiveCamera(const Vector3D_T<double> &p, const Vector3D_T<double> &f, const Vector3D_T<double> &u, const Vector3D_T<double> &r, const double a, const double fo);
-        Ray<double> GetRay(const double x, const double y) const;
-
-    private:
-        double fov;
-    };
+    std::function<Ray<double>(const double, const double)> PerspectiveCamera(const Vector3D_T<double> &position, const Vector3D_T<double> &front, const Vector3D_T<double> &up, const Vector3D_T<double> &right, const double aspect, const double fov);
 }
 
 #endif // MOONLIGHT_PERSPECTIVE_CAMERA_HPP_
