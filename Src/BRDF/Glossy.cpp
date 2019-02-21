@@ -4,7 +4,7 @@
 
 namespace MoonLight
 {
-    std::function<Ray<double>(const Vector3D_T<double> &, const Vector3D_T<double> &, const Vector3D_T<double> &)> Glossy(double degree)
+    BRDF Glossy(double degree)
     {
         return [=](const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &direction)
         {
