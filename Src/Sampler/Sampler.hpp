@@ -1,16 +1,13 @@
 #ifndef MOONLIGHT_SAMPLER_HPP_
 #define MOONLIGHT_SAMPLER_HPP_
 
-#include <memory>
+#include "../Math/Vector.hpp"
+
+#include <functional>
 
 namespace MoonLight
 {
-    template <typename T, int N>
-    class Sampler
-    {
-    public:
-        virtual void Sampling(std::shared_ptr<std::array<Vector2D_T<T>, N * N>> samples) = 0;
-    };
+    using Sampler = std::function<void(Vector2D_T<double> &)>;
 }
 
 #endif // MOONLIGHT_SAMPLER_HPP_

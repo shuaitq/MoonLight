@@ -4,7 +4,7 @@
 
 namespace MoonLight
 {
-    std::function<void(Vector2D_T<double> &)> Jittered(size_t n)
+    Sampler Jittered(size_t n)
     {
         return [=](Vector2D_T<double> &v)
         {
