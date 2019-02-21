@@ -5,14 +5,11 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 namespace MoonLight
 {
-    class ImageFormat
-    {
-    public:
-        virtual void Save(const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels) const = 0;
-    };
+    using ImageFormat = std::function<void(const std::string &, const size_t width, const size_t height, const std::vector<RGB_T<double>> &)>;
 }
 
 #endif // MOONLIGHT_IMAGE_FORMAT_HPP_
