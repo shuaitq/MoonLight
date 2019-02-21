@@ -1,18 +1,13 @@
 #ifndef MOONLIGHT_GLOSSY_HPP_
 #define MOONLIGHT_GLOSSY_HPP_
 
-#include "BRDF.hpp"
+#include "../Core/Ray.hpp"
+
+#include <functional>
 
 namespace MoonLight
 {
-    class Glossy : public BRDF
-    {
-    public:
-        Glossy(double d);
-        Ray<double> GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &direction) const;
-    private:
-        double degree;
-    };
+    std::function<Ray<double>(const Vector3D_T<double> &, const Vector3D_T<double> &, const Vector3D_T<double> &)> Glossy(double degree);
 }
 
 #endif // MOONLIGHT_GLOSSY_HPP_

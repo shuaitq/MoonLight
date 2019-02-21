@@ -1,19 +1,13 @@
 #ifndef MOONLIGHT_DIFFUSE_HPP_
 #define MOONLIGHT_DIFFUSE_HPP_
 
-#include "BRDF.hpp"
+#include "../Core/Ray.hpp"
+
+#include <functional>
 
 namespace MoonLight
 {
-    class Diffuse : public BRDF
-    {
-    public:
-        Diffuse(double d);
-        Ray<double> GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &direction) const;
-        
-    private:
-        double degree;
-    };
+    std::function<Ray<double>(const Vector3D_T<double> &, const Vector3D_T<double> &, const Vector3D_T<double> &)> Diffuse(double degree);
 }
 
 #endif // MOONLIGHT_DIFFUSE_HPP_
