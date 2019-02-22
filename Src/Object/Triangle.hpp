@@ -5,30 +5,29 @@
 
 namespace MoonLight
 {
-    template <typename T>
-    class Triangle : public Object<T>
+    Object Triangle(const Material &material, const Vector3D_T<double> &v0, const Vector3D_T<double> &v1, const Vector3D_T<double> &v2)
     {
-    public:
-        Triangle(const std::shared_ptr<Material<T>> &m, const Vector3D_T<T> &v_0, const Vector3D_T<T> &v_1, const Vector3D_T<T> &v_2):Object<T>(m), v0(v_0), v1(v_1), v2(v_2){}
-
-        void Hit(const Ray<T> &r, Vector3D_T<T> &position, Vector3D_T<T> &normal, Vector3D_T<T> &incident, std::shared_ptr<Material<T>> &material, T &tmin)
+        return [=](const Ray<double> &ray)
         {
-            Vector3D_T<T> E1 = v1 - v0;
+            double t = std::numeric_limits<double>::max();
+            Vector3D_T<double> position, normal;
 
-            Vector3D_T<T> E2 = v2 - v0;
+            Vector3D_T<double> E1 = v1 - v0;
 
-            Vector3D_T<T> P = Cross(r.direction, E2);
+            Vector3D_T<double> E2 = v2 - v0;
 
-            T det = Dot(E1, P);
+            Vector3D_T<double> P = Cross(ray.direction, E2);
 
-            Vector3D_T<T> TT;
+            double det = Dot(E1, P);
+
+            Vector3D_T<double> TT;
             if(det > 0)
             {
-                TT = r.origin - v0;
+                TT = ray.origin - v0;
             }
             else
             {
-                TT = v0 - r.origin;
+                TT = v0 - ray.origin;
                 det = -det;
             }
 
@@ -37,7 +36,7 @@ namespace MoonLight
                 return;
             }
 
-            T t, u, v;
+            double t, u, v;
 
             u = Dot(TT, P);
             if(u < 0 || u > det)
@@ -45,9 +44,9 @@ namespace MoonLight
                 return;
             }
 
-            Vector3D_T<T> Q = Cross(TT, E1);
+            Vector3D_T<double> Q = Cross(TT, E1);
 
-            v = Dot(r.direction, Q);
+            v = Dot(ray.direction, Q);
             if(v < 0 || u + v > det)
             {
                 return;
@@ -55,12 +54,12 @@ namespace MoonLight
 
             t = Dot(E2, Q);
 
-            T fInvDet = 1 / det;
+            double fInvDet = 1 / det;
             t *= fInvDet;
             u *= fInvDet;
             v *= fInvDet;
 
-            const T eps = 1e-5;
+            const double eps = 1e-5;
 
             if(t < eps || t >= tmin)
             {
@@ -72,13 +71,9 @@ namespace MoonLight
             position = r.GetPoint(t);
             normal = Normalize(Cross(E2, E1));
 
-            //std::cout << t << std::endl;
-            //std::cout << normal << std::endl;
-        }
-
-    private:
-        Vector3D_T<T> v0, v1, v2;
-    };
+            return std::make_tuple(t, position, normal, ray.direction, material);
+        };
+    }
 }
 
 #endif // MOONLIGHT_TRIANGLE_HPP_

@@ -3,65 +3,36 @@
 
 #include "Object.hpp"
 
+#include <limits>
+
 namespace MoonLight
 {
-    template <typename T>
-    class Sphere : public Object<T>
+    Object Sphere(const Material &material, const Vector3D_T<double> &center, const double radius)
     {
-    public:
-        Sphere(std::shared_ptr<Material<T>> m, T r, const Vector3D_T<T> &p):Object<T>(m), radius(r), position(p){}
-        void Hit(const Ray<T> &r, Vector3D_T<T> &p, Vector3D_T<T> &n, Vector3D_T<T> &i, std::shared_ptr<Material<T>> &m, T &tmin)
+        return [=](const Ray<double> &ray)
         {
-            const T eps = 1e-5;
+            double t = std::numeric_limits<double>::max();
+            Vector3D_T<double> position, normal;
 
-            T t;
-            Vector3D_T<T> temp = r.origin - position;
-            T a = Dot(r.direction, r.direction);
-            T b = 2.0 * Dot(temp, r.direction);
-            T c = Dot(temp, temp) - radius * radius;
-            T disc = b * b - 4.0 * a * c;
+            Vector3D_T<double> v = ray.origin - center;
+            double a0 = v.Length2() - radius * radius;
+            double DdotV = Dot(ray.direction, v);
 
-            if(disc < 0)
+            if(DdotV <= 0)
             {
-                return;
-            }
-            else
-            {
-                T e = sqrt(disc);
-                T denom = 2.0 * a;
-                t = (-b - e) / denom;
+                double delta = DdotV * DdotV - a0;
 
-                if(t > eps && tmin > t)
+                if(delta >= 0)
                 {
-                    tmin = t;
-                    m = this->material;
-                    n = (temp + t * r.direction) / radius;
-                    p = r.GetPoint(t);
-                    i = r.direction;
-                    
-                    return;
-                }
-
-                t = (-b + e) / denom;
-
-                if(t > eps && tmin > t)
-                {
-                    tmin = t;
-                    m = this->material;
-                    n = (temp + t * r.direction) / radius;
-                    p = r.GetPoint(t);
-                    i = r.direction;
-
-                    return;
+                    t = -DdotV - sqrt(delta);
+                    position = ray.GetPoint(t);
+                    normal = Normalize(position - center);
                 }
             }
 
-            return;
-        }
-
-        T radius;
-        Vector3D_T<T> position;
-    };
+            return std::make_tuple(t, position, normal, ray.direction, material);
+        };
+    }
 }
 
 #endif // MOONLIGHT_SPHERE_HPP_
