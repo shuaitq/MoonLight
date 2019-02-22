@@ -1,17 +1,12 @@
 #ifndef MOONLIGHT_MATTE_HPP_
 #define MOONLIGHT_MATTE_HPP_
 
+#include "../BRDF/BRDF.hpp"
 #include "Material.hpp"
 
 namespace MoonLight
 {
-    class Matte : public Material
-    {
-    public:
-        Matte(const RGB_T<double> &c, const RGB_T<double> &e, const std::shared_ptr<BRDF> &b);
-
-        Ray<double> GetRay(const Vector3D_T<double> &position, const Vector3D_T<double> &normal, const Vector3D_T<double> &incident);
-    };
+    Material Matte(const RGB_T<double> &color, const RGB_T<double> &emission, const BRDF &brdf);
 }
 
 #endif // MOONLIGHT_MATTE_HPP_
