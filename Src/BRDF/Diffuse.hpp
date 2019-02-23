@@ -5,7 +5,7 @@
 
 namespace MoonLight
 {
-    BRDF Diffuse(double degree);
+    BRDF Diffuse();
 }
 
 #endif // MOONLIGHT_DIFFUSE_HPP_
