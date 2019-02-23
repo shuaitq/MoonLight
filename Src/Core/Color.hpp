@@ -24,7 +24,7 @@ namespace MoonLight
         {
             return RGB_T<T>(red + rgb.red, green + rgb.green, blue + rgb.blue);
         }
-        RGB_T<T> operator += (const RGB_T<T> &rgb)
+        RGB_T<T>& operator += (const RGB_T<T> &rgb)
         {
             red += rgb.red;
             green += rgb.green;
