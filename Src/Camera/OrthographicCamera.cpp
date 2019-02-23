@@ -6,7 +6,7 @@ namespace MoonLight
     {
         return [=](const double x, const double y)
         {
-            return Ray<double>(position + up * (x / 2 * height) + right * (y / 2 * height * aspect), front);
+            return Ray<double>(position + up * (y / 2 * height) + right * (x / 2 * height * aspect), front);
         };
     }
 }

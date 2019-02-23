@@ -8,7 +8,7 @@ namespace MoonLight
         {
             double tan_fov = tan(fov / 2);
 
-            return Ray<double>(position, Normalize(front + up * (x * tan_fov) + right * (y * tan_fov * aspect)));
+            return Ray<double>(position, Normalize(front + up * (y * tan_fov) + right * (x * tan_fov * aspect)));
         };
     }
 }

@@ -7,8 +7,8 @@ namespace MoonLight
         return [=](const double x, const double y)
         {
             double dis = sqrt(y * y + x * x);
-            double theta = dis * fov;
-            double phi = atan2(y * aspect, x);
+            double theta = dis * fov / 2;
+            double phi = atan2(y, x * aspect);
 
             return Ray<double>(position, front * cos(theta) + up * sin(theta) * sin(phi) + right * sin(theta) * cos(phi));
         };
