@@ -15,16 +15,20 @@ namespace MoonLight
             Vector3D_T<double> position, normal;
 
             Vector3D_T<double> v = ray.origin - center;
-            double a0 = v.Length2() - radius * radius;
             double DdotV = Dot(ray.direction, v);
 
             if(DdotV <= 0)
             {
+                double a0 = v.Length2() - radius * radius;
                 double delta = DdotV * DdotV - a0;
 
                 if(delta >= 0)
                 {
                     t = -DdotV - sqrt(delta);
+                    if(t <= 1e-5)
+                    {
+                        t = -DdotV + sqrt(delta);
+                    }
                     position = ray.GetPoint(t);
                     normal = Normalize(position - center);
                 }
