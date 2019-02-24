@@ -5,7 +5,6 @@
 #include "../Object/Triangle.hpp"
 #include "../Material/Glass.hpp"
 #include "../BRDF/Glossy.hpp"
-#include "../Tracer/Tracer.hpp"
 
 #include <vector>
 
