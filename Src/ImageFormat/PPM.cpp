@@ -7,7 +7,7 @@ namespace MoonLight
 {
     ImageFormat PPM()
     {
-        return [](const std::string &path, const int width, const int height, const std::vector<RGB_T<double>> &pixels)
+        return [](const std::string &path, const size_t width, const size_t height, const std::vector<RGB_T<double>> &pixels)
         {
             std::ofstream out(path);
 
@@ -17,7 +17,7 @@ namespace MoonLight
             }
 
             out << "P3" << std::endl << width << ' ' << height << std::endl << "255" << std::endl;
-            for(int i = 0; i < height * width; ++ i)
+            for(size_t i = 0; i < height * width; ++ i)
             {
                 out << static_cast<int>(pixels[i].red * 255) << ' ' << static_cast<int>(pixels[i].green * 255) << ' ' << static_cast<int>(pixels[i].blue * 255) << ' ';
             }
