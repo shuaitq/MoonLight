@@ -4,7 +4,7 @@ namespace MoonLight
 {
     void World::Render()
     {
-        const int width = 500, height = 500, num_set = 2000, samples = 5;
+        const int width = 500, height = 500, num_set = 10, samples = 5;
         
         std::vector<RGB_T<double>> screen, back;
         screen.resize(width * height);
@@ -20,19 +20,19 @@ namespace MoonLight
         for(int set = 0; set < num_set; ++ set)
         {
             printf("set %d\n", set);
-            for(int x = 0; x < height; ++ x)
+            for(int y = 0; y < height; ++ y)
             {
-                printf("%d\n", x);
-                for(int y = 0; y < width; ++ y)
+                printf("%d\n", y);
+                for(int x = 0; x < width; ++ x)
                 {
                     RGB_T<double> color;
 
                     for(const auto &p : s)
                     {
-                        color += tracer(camera(((x + p.x) / height * 2) - 1, ((y + p.y) / width * 2) - 1), 0);
+                        color += tracer(camera(((x + p.x) / width * 2) - 1, ((y + p.y) / height * 2) * -1 + 1), 0);
                     }
                     
-                    screen[x * width + y] = screen[x * width + y] * set / (set + 1) + color / (set + 1) / samples / samples;
+                    screen[y * width + x] = screen[y * width + x] * set / (set + 1) + color / (set + 1) / samples / samples;
                 }
             }
 
@@ -52,7 +52,7 @@ namespace MoonLight
                 }
             }
 
-            image_format("test.ppm", width, height, back);
+            image_format("output.ppm", width, height, back);
         }
     }
 
