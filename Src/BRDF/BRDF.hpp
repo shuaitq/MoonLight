@@ -10,4 +10,4 @@ namespace MoonLight
     using BRDF = std::function<Ray<double>(const Vector3D_T<double> &, const Vector3D_T<double> &, const Vector3D_T<double> &)>;
 }
 
-#endif // MOONLGITH_BRDF_HPP_
+#endif // MOONLIGHT_BRDF_HPP_
